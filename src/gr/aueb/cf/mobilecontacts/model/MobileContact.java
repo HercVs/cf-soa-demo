@@ -2,7 +2,7 @@ package gr.aueb.cf.mobilecontacts.model;
 
 public class MobileContact extends AbstractEntity {
     private UserDetails userDetails;
-    public String phoneNumber;
+    private String phoneNumber;
 
     public MobileContact() {}
 
