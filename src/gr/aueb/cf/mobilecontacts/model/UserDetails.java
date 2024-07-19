@@ -1,13 +1,13 @@
 package gr.aueb.cf.mobilecontacts.model;
 
-public class UserDetails extends AbstractEntity {
+public class UserDetails extends AbstractEntity implements IdentifiableEntity {
     private String firstname;
     private String lastname;
 
     public UserDetails() {}
 
     public UserDetails(long id, String firstname, String lastname) {
-        setId(id);
+        this.setId(id);
         this.firstname = firstname;
         this.lastname = lastname;
     }
@@ -37,7 +37,8 @@ public class UserDetails extends AbstractEntity {
     @Override
     public String toString() {
         return "UserDetails{" +
-                "firstname='" + firstname + '\'' +
+                "id=" + getId() +
+                ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 '}';
     }
