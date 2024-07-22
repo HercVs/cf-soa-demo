@@ -11,7 +11,9 @@ import gr.aueb.cf.mobilecontacts.service.exceptions.ContactNotFoundException;
 import gr.aueb.cf.mobilecontacts.service.exceptions.PhoneNumberAlreadyExistsException;
 import gr.aueb.cf.mobilecontacts.service.exceptions.UserIdAlreadyExistsException;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MobileContactServiceImpl implements IMobileContactService {
     private final IMobileContactDAO dao;
@@ -46,21 +48,26 @@ public class MobileContactServiceImpl implements IMobileContactService {
     }
 
     @Override
-    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO dto)
+    public MobileContact updateMobileContact(long id, MobileContactUpdateDTO newDto)
             throws PhoneNumberAlreadyExistsException, UserIdAlreadyExistsException, ContactNotFoundException {
 
         MobileContact mobileContact;
 
         try {
-            mobileContact = mapMobileContactFromUpdateDTO(dto);
+            mobileContact = mapMobileContactFromUpdateDTO(newDto);
 
             if (!dao.userIdExists(id)) {
                 throw new ContactNotFoundException(id);
             }
-            if (dao.phoneNumberExists(mobileContact.getPhoneNumber())) {
+
+            MobileContact oldContact = dao.get(id);
+
+            if (dao.phoneNumberExists(mobileContact.getPhoneNumber())
+                    && !oldContact.getPhoneNumber().equals(newDto.getPhoneNumber())) {
                 throw new PhoneNumberAlreadyExistsException(mobileContact);
             }
-            if (dao.userIdExists(mobileContact.getId())) {
+            if (dao.userIdExists(mobileContact.getId())
+                    && oldContact.getId() != newDto.getId()) {
                 throw new UserIdAlreadyExistsException(mobileContact);
             }
             // logging
@@ -109,6 +116,7 @@ public class MobileContactServiceImpl implements IMobileContactService {
     public MobileContact getMobileContactById(long id) throws ContactNotFoundException {
         try {
             if (!dao.userIdExists(id)) { // if exists, optional from get() will never be null
+                // alternate implementation with null state testing on github
                 throw new ContactNotFoundException(id);
             }
             // logging
@@ -140,6 +148,7 @@ public class MobileContactServiceImpl implements IMobileContactService {
     @Override
     public List<MobileContact> getAllMobileContacts() {
         return dao.getAll();
+//        return Collections.unmodifiableList(dao.getAll());
     }
 
     private MobileContact mapMobileContactFromInsertDTO(MobileContactInsertDTO dto) {
