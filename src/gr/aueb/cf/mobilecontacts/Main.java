@@ -31,7 +31,7 @@ public class Main {
             System.out.println("Παρακαλώ εισάγετε επιλογή");
             choice = getChoice();
 
-            if (choice.matches("[qQ]")) {
+            if ((choice.matches("[qQ]")) || choice.equals("6")) {
                 System.out.println("Goodbye. Thanks for using our app");
                 break;
             }
@@ -42,6 +42,7 @@ public class Main {
             }
 
             processWithChoice(choice);
+            scanner.nextLine();
         }
     }
 
